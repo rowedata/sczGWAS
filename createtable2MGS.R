@@ -1,7 +1,16 @@
+# Benazir Rowe 
+# Summer 2019 UNLV 
+# Statistical analysis of the overlap between MGS and SSCCS datasets
+# Overlap is defined based on various distances
+
+
+
+# bash command to start the R session on the remote cluster for high volume computations
 qsub -I -l ncpus=1,mem=5gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
 module load intel intelmpi R
 R
 
+# number of regions for each chromosome of the SSCCS dataset, manual input
 size <- matrix(,22,2)
 size[,1]<- c(1:22)
 size[,2]<- c(103,107,89,80,83,84,70,72,61,71,65,63,49,41,38,39,30,38,17,33,18,15)
@@ -17,7 +26,7 @@ newdata <- grand[order(-grand$sum),]
 top5regions <- newdata[1:64,]
 
 #first
-i=1
+i = 1
 chr = top5regions$chr[i]
 region =top5regions$region[i]
 
@@ -57,14 +66,14 @@ colnames(supplTable)<-c("chromosome","region","start", "end","rsID","location","
 write.csv(supplTable,"/storage/nipm/kerimbae/sliding_window/supplTableMGS.csv", quote=FALSE,row.names = FALSE)
 
 
-#item 11 statistical analysis of overlap between MGS and SSCCS
+# statistical analysis of the overlap between MGS and SSCCS 
  
 setwd("C:/Users/Benazir/Documents/")
 
 MGS <- read.csv("PAPER ONE/supplTableMGS.csv")
 SSCCS <- read.csv("PAPER ONE/supplTableSWD.csv")
 
-#subset same chromosomes
+#subset the same chromosomes
 
 result <- result[FALSE,]
 
@@ -109,7 +118,7 @@ for (i in 1:(length-1)){
 }
 
 
-#write.csv(result,"PAPER ONE/overlapMgsSsccs300K.csv")
+
 
 
 

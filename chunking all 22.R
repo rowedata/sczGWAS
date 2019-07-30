@@ -1,10 +1,14 @@
-#######chunking all
+# Benazir Rowe 
+# Spring 2018 UNLV 
+# breaking up the data into overlapping regions for each chromosome for MGS dataset
 
+# bash command to start the R session on the remote cluster for high volume computations
 
 qsub -I -l ncpus=1,mem=5gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
 module load intel intelmpi R 
 R
 
+# iterate over 22 chromosomes
 
 for (q in 1:22){
 
@@ -13,7 +17,8 @@ conn <- file(path,open="r")
 lines <- readLines(conn)
 d <- length(lines)
 print(d)
-#sliding window smart way
+
+#sliding window implementation
 k = 1
 
     for (i in seq(1000, d, 1000)) {

@@ -1,14 +1,15 @@
 # Benazir Rowe 
+# 4/4/2018
 # Recoding swedish dataset from bimbam 1,2 to chunks in mean genotype format
-#4/4/2018
 # accounting for the last leftover chunk
 
-#code to start R on cluster
+# bash command to start the R session on the remote cluster for high volume computations
+
 qsub -I -l ncpus=1,mem=5gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
 module load intel intelmpi R 
 R
 
-#actual code for splitting into chunks recoded imputed data
+# splitting into chunks recoded imputed data
 
 for (q in 1:22){
   
@@ -40,7 +41,7 @@ for (q in 1:22){
     print(end)
     k = k + 1
     
-    #five hundreds  
+    #five hundreds 500-1500,1500-2500, 2500-3500 etc. 
     end <- end + 500
     if (end < d){
       name <- paste("c",k, sep ="")
@@ -56,7 +57,7 @@ for (q in 1:22){
     }
   }
   
-  #last chunk leftover
+  #last region is composed by taking last 1000 SNPs of the chromosome
   name <- paste("c", k, sep ="")
   
   assign(name, lines[(d - 1000 + 1):d])

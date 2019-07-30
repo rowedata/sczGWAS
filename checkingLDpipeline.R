@@ -1,10 +1,11 @@
-#Benazir Rowe Spring 2018 UNLV 
-#LD tables production from piMASS
-#Takes lists of significant loci available 
-#Reads the corresponding full mcmc output files and pick top 10% SNPs
-#Save names and locations to a file under a region name
+# Benazir Rowe 
+# Spring 2018 UNLV 
+# LD tables production from piMASS
+# Takes lists of significant loci available 
+# Reads the corresponding full mcmc output files and pick top 10% SNPs
+# Save names and locations to a file under a region name
 
-#bash command to start the R session
+# bash command to start the R session on the remote cluster for high volume computations
   
 qsub -I -l ncpus=1,mem=5gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
 module load intel intelmpi R
@@ -13,9 +14,6 @@ R
 #specify the chromosome number to analyze
 
 chr = 9
-
-
-####################### same code for all chromosomes
 
 table = read.table(paste("routput/list",chr,".txt",sep=""), head = T)
 length(table$chunk)
@@ -30,10 +28,12 @@ for (i in 1 : length(list))
 {
   chunk = list[i]
   maxregion = read.table(paste("progs/pimass/pimass/output/chr",chr,"/goldstand/c",chunk,".mcmc.txt",sep=""),head=T)
+  
   #find max only
   max(maxregion$postc)
   which.max(maxregion$postc)
   maxregion$rs[which.max(maxregion$postc)]
+  
   #find top 10%
   cutoff = quantile(maxregion$postc,probs = 0.99)
   topten = vector()

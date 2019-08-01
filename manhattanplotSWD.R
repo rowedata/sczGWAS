@@ -1,14 +1,9 @@
-### RUN 1################################################
+# Benazir Rowe
+# Summer 2019
+# Create manhattan plot for MGS dataset
 
-qsub -I -l ncpus=1,mem=5gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
-module load intel intelmpi R 
-R
+#input the number of regions per chromosome in SSCCS dataset
 
-
-# plot type 1: merging odds
-# If odd number of chunks great just merge. If even cut and add a half of the last one
-
-# hand input the chromosome size
 size <- matrix(,22,2)
 size[,1]<- c(1:22)
 size[,2]<- c(105,102,84,71,74,85,67,66,59,70,65,63,48,41,39,41,36,38,26,27,18,19)
@@ -74,11 +69,6 @@ write.table(grand,paste0("/storage/nipm/kerimbae/pimass/output/ssccs/inversePnop
 
 ###PLOT 1.1 ############################################ basic Manhattan -log10 of (PIP) ###################################################
 
-
-qsub -I -l ncpus=1,mem=7gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
-module load intel intelmpi R 
-R
-
 grand <-  read.table(paste0("/storage/nipm/kerimbae/pimass/output/ssccs/inversePnoprior"),header=TRUE)
 range(grand$P)
 -log10(0.10804)=0.9664154
@@ -96,24 +86,24 @@ manhattan(grand,  ylim = c(0, 5), cex = 0.6, ylab=expression('log'[10]*'(1-PIP)'
 
 dev.off()
 
+#scp kerimbae@cherry-creek.nscee.edu:/storage/nipm/kerimbae/pimass/output/ssccs/figure1SWD.pdf Desktop/
 
-scp kerimbae@cherry-creek.nscee.edu:/storage/nipm/kerimbae/pimass/output/ssccs/figure1SWD.pdf Desktop/
-
-  
 #Manhattan plot analysis
   
 #subsetting required SNPs
 newdata <- grand[order(-grand$P),]
-q =newdata[1:20,]  
+q = newdata[1:20,]  
 write.csv(q, "/storage/nipm/kerimbae/pimass/output/ssccs/top20SNPSSCCS.csv")
 
 data <- read.csv("/storage/nipm/kerimbae/pimass/output/ssccs/summarySSCCS.csv")
 
 # find the regions to which top 20 sNPs belong
 for (i in 1:20){
-  position =top20SNPsManh$BP[i]
+  
+  position = top20SNPsManh$BP[i]
   chr = top20SNPsManh$CHR[i]
-  newdata <- data[ which(position>data$start & position <data$end & data$chr==chr),]
+  newdata <- data[which(position > data$start & position < data$end & data$chr == chr),]
   print(newdata)
+  
 }
   

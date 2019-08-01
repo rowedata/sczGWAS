@@ -1,7 +1,7 @@
-qsub -I -l ncpus=1,mem=5gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
-module load intel intelmpi R
-R
-
+# Benazir Rowe
+# Summer 2019
+# Subsetting top 1% of the SNPs from the top 5% of the regions
+# generation of the table for comparison between datasets
 
 ######################################################################################
 #change input ONLY here
@@ -17,12 +17,10 @@ for (k in 1:22){
   i=7
   chr=size$chr[k]
   length=size$chrlength[k]
-  
   gs <- matrix(,length,5)
   
 #########################################
-#gold standard
-
+#true phenotype run
 
 for (i in 1:length){
   
@@ -42,9 +40,6 @@ write.table(gs, file =paste("/storage/nipm/kerimbae/pimass/output/routput/result
 }
 
 
-#locally 
-
-chr = 2
 mcmc <- read.table(paste0("C:/Users/Benazir/Desktop/revision/resultchr",chr,".txt"),header=T)
 
 length=dim(mcmc)[1]

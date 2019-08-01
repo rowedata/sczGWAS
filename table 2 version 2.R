@@ -1,8 +1,6 @@
+# Benazir Rowe
+# Summer 2019
 # Table 2 new version top 5% overall regions 
-qsub -I -l ncpus=1,mem=10gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
-module load intel intelmpi R
-R
-
 # based on the true phenotype run routput/gschri.txt want to subset top 5% of the regions.
 # we do it based on their rank and check if percentile is >=95
 # percentiles for top based on 10K

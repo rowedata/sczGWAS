@@ -1,15 +1,16 @@
-qsub -I -l ncpus=1,mem=2gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
-module load intel intelmpi R
-R
+# Benazir Rowe 
+# Spring 2019 UNLV
+# addition of top 10 principal components and binary preprocessing
 
-#PCA and binary preprocessing
-
+# export 10 PC data from PLINK
 eigenvec <- read.table("/storage/nipm/kerimbae/mgs_scz/qcvcf.eigenvec") 
-#5334 by 12 (don't know what first 2 columns mean)
+
+#size 5334 by 12 
 
 # extract sex data
 fam <- read.table("/storage/nipm/kerimbae/mgs_scz/scz.fam")
-#5334 by 6 Family ID Sample ID Paternal ID Maternal ID Sex (1=male; 2=female; other=unknown) Affection (0=unknown; 1=unaffected; 2=affected)
+
+#structure: 5334 by 6 Family ID Sample ID Paternal ID Maternal ID Sex (1=male; 2=female; other=unknown) Affection (0=unknown; 1=unaffected; 2=affected)
 
 #recode sex to 0/1 (0-male)
  
@@ -33,7 +34,7 @@ response <- replace(response, response=='2',1)
 write.table(response,"/storage/nipm/kerimbae/mgs_scz/response")
 
 #############################################################################
-# part 2 fit logistic regression and analyze errors. 
+# part 2 fit logistic regression and analyze errors
 
 diagnosis <- read.table("/storage/nipm/kerimbae/mgs_scz/response",stringsAsFactors=FALSE)
 diagnosis <- matrix(unlist(diagnosis), ncol = 1, byrow = TRUE)
@@ -63,7 +64,7 @@ x0 <- c(1,covariates[1,])
 eta0 <- sum(covariates*coef(probitmod))
 ilogit(eta0)
 
-#########################Working vector Y tilde
+#########################Working vector Y tilde GMATT method investigation phenotype adjustment
 #alpha coefficients
 alphas <- c(0.2397054,6.0258206,0.9150710,-3.2395109,2.3185416,1.8713296,1.1450852,6.7025039,9.0176767,1.9103886,-0.9178600,-0.5622860)
 newdata<- rep(1,5334)
@@ -75,9 +76,6 @@ xiAlpha <- rowSums(q)
 pi0<- exp(xiAlpha)/1+exp(xiAlpha)
 
 newphenoscz <- (diagnosis-pi0)/pi0*(1-pi0)
-
-
-
 write.table(newphenoscz,row.names = FALSE,col.names = FALSE, "/storage/nipm/kerimbae/pimass/input/mgsInput/newphenoscz.txt")
 
 

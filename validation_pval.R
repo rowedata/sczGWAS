@@ -1,15 +1,10 @@
-qsub -I -l ncpus=1,mem=2gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
-module load intel intelmpi R
-R
-
-
-validation.dir <- "progs/pimass/pimass/output/validation"
-
-######################################################################################
-#running 10,000 validations on last 18 chunks, calculating results here
+# Benazir Rowe
+# Summer 2018
+# adaptive pvalue calculation based on regions
+# running 10,000 validations on the best 18 regions based on permutation test, calculating results here
 # progs/pimass/pimass/input/newpbs/validation_true.pbs - pbs file to run jobs
 
-
+validation.dir <- "progs/pimass/pimass/output/validation"
 
 chr = 4
 chunk=74
@@ -39,11 +34,9 @@ for (i in start:end){
 
 k
 
-
-
 #after moving to /storage
 
-start=895
+start=895 # the number of iteration to start from to calculate the number of times statistics has exceeded true phnotype value
 
 for (i in start:end){
   

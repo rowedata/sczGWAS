@@ -1,16 +1,18 @@
-qsub -I -l ncpus=1,mem=5gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
-module load intel intelmpi R
-R
+# Benazir Rowe
+# Summer 2019
+# Create manhattan plot for MGS dataset
 
+#input the number of regions per chromosome in MGS dataset
 size <- matrix(,22,2)
 size[,1]<- c(1:22)
 size[,2]<- c(103,107,89,80,83,84,70,72,61,71,65,63,49,41,38,39,30,38,17,33,18,15)
 size <- data.frame(size)
 colnames(size)<-c("chr","chrlength")
 
+############################ combining data by chrmosomes 1,3,5 chunks etc due to sliding window design
 
-############################ combining data by chrmosomes 1,3,5 chunks etc
 for (chr in 1:22){
+  
   chr = size$chr[chr]
   chrlength = size$chrlength[chr]
   
@@ -39,16 +41,17 @@ for (chr in 1:22){
   
   colnames(placehold)<-c("SNP","CHR","BP","P","beta")
   write.table(placehold,paste0("/storage/nipm/kerimbae/sliding_window/chr",chr,"odd"))
+  
 }
 
 
 
 ### grand combine 22 chrs
-grand <-  read.table(paste0("/storage/nipm/kerimbae/sliding_window/chr1odd"),header=TRUE)
+grand <-  read.table(paste0("/storage/nipm/kerimbae/sliding_window/chr1odd"), header=TRUE)
 
 for (chr in 2:22){
   
-  table <- read.table(paste0("/storage/nipm/kerimbae/sliding_window/chr",chr,"odd"),header=TRUE)
+  table <- read.table(paste0("/storage/nipm/kerimbae/sliding_window/chr",chr,"odd"), header=TRUE)
   grand <- rbind(grand,table)
   dim(grand)
   print(tail(grand))
@@ -57,9 +60,7 @@ for (chr in 2:22){
 
 #combined dataset
 write.table(grand,paste0("/storage/nipm/kerimbae/sliding_window/grandodd"))
-
 grand =read.table("/storage/nipm/kerimbae/sliding_window/grandodd")
-
 grand$beta <- 1-grand$P
 colnames(grand)<-c("SNP","CHR","BP","Actual_P","P")
 
@@ -67,11 +68,6 @@ colnames(grand)<-c("SNP","CHR","BP","Actual_P","P")
 write.table(grand,paste0("/storage/nipm/kerimbae/sliding_window/originalManhattan"))
 
 ###PLOT 1.1 ############################################ basic Manhattan -log10 of (PIP) ###################################################
-
-
-qsub -I -l ncpus=1,mem=7gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
-module load intel intelmpi R 
-R
 
 grand <-  read.table(paste0("/storage/nipm/kerimbae/sliding_window/originalManhattan"),header=TRUE)
 range(grand$P)
@@ -91,12 +87,12 @@ manhattan(grand,  ylim = c(0, 2), cex = 0.6, ylab=expression('log'[10]*'(1-PIP)'
 dev.off()
 
 
-scp kerimbae@cherry-creek.nscee.edu:/storage/nipm/kerimbae/sliding_window/figure1MGSannot.pdf Desktop/
+# scp kerimbae@cherry-creek.nscee.edu:/storage/nipm/kerimbae/sliding_window/figure1MGSannot.pdf Desktop/
   
   
-#subsetting required SNPs
+#subsetting top 20 SNPs
 newdata <- grand[order(grand$P),]
-q =newdata[1:20,]  
+q = newdata[1:20,]  
 write.csv(q, "/storage/nipm/kerimbae/sliding_window/top20SNP.csv")
 
 data <- read.csv("/storage/nipm/kerimbae/sliding_window/summaryMGS.csv")

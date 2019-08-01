@@ -1,20 +1,21 @@
-qsub -I -l ncpus=1,mem=5gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
-module load intel intelmpi R 
-R
+# Benazir Rowe
+# 6/20/2019
+# Supplementary Material 3 generation
+# Best performing regions based on permutation test and their genome wide rank 
+# according to the initial run using the MGS dataset. 
 
 
 # plot type 1: merging odds
 # If odd number of chunks great just merge. If even cut and add a half of the last one
 
-# hand input the chromosome size
+# input the chromosome number and region number based on Table 1
 winners <- matrix(,18,2)
-winners[,1]<- c(4,8,9,9,9,14,14,15,18,19,20,1,3,5,13,15,7,16)
-winners[,2]<- c(74,30,23,24,32,6,33,29,15,5,1,36,15,34,41,28,58,16)
+winners[,1]<- c(4,8,9,9,9,14,14,15,18,19,20,1,3,5,13,15,7,16) #chromosome number
+winners[,2]<- c(74,30,23,24,32,6,33,29,15,5,1,36,15,34,41,28,58,16) # region number
 winners <- data.frame(winners)
 colnames(winners)<- c("chr","region")
 
-###
-
+# input  the size of the 22 chromosomes for 
 size <- matrix(,22,2)
 size[,1]<- c(1:22)
 size[,2]<- c(103,107,89,80,83,84,70,72,61,71,65,63,49,41,38,39,30,38,17,33,18,15)
@@ -22,11 +23,9 @@ size <- data.frame(size)
 colnames(size)<-c("chr","chrlength")
 
 
-
-
 #summarize each chromosomes mcmc results
 
-for (k in 1:22){ #looping over chromosomes
+for (k in 1:22) { #looping over chromosomes
   
   chr = size$chr[k]
   length = size$chrlength[k]  #chromosome length

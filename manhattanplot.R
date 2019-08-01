@@ -1,11 +1,5 @@
 ### RUN 1################################################
-
-qsub -I -l ncpus=1,mem=7gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
-module load intel intelmpi R 
-R
-
-
-# plot type 1: merging odds
+# plot type 1: merging odd regions
 # If odd number of chunks great just merge. If even cut and add a half of the last one
 
 # hand input the chromosome size
@@ -16,7 +10,7 @@ size[,2]<- c(103,107,89,80,83,84,70,72,61,71,65,63,49,41,38,39,30,38,17,33,18,15
 size <- data.frame(size)
 colnames(size)<-c("chr","chrlength")
 
-############################ combining data by chrmosomes 1,3,5 chunks etc
+############################ combining data by chrmosomes 1,3,5 chunks etc due to sliding window
 for (chr in 1:22){
   chr = size$chr[chr]
   chrlength = size$chrlength[chr]
@@ -75,12 +69,9 @@ write.table(grand,paste0("/storage/nipm/kerimbae/sliding_window/inversePnoprior"
 
 ###PLOT 1.1 ############################################ basic Manhattan -log10 of (PIP) ###################################################
 
-
-qsub -I -l ncpus=1,mem=7gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
-module load intel intelmpi R 
-R
-
 grand <-  read.table(paste0("/storage/nipm/kerimbae/sliding_window/inversePnoprior"),header=TRUE)
+
+#range of the -log10PIP
 range(grand$P)
 -log10(0.10804)=0.9664154
 -log10(0.99991)=3.908826e-05
@@ -96,19 +87,22 @@ manhattan(grand,  ylim = c(0, 1), cex = 0.6, ylab=expression('log'[10]*'(1-PIP)'
 dev.off()
 
 
-scp kerimbae@cherry-creek.nscee.edu:/storage/nipm/kerimbae/sliding_window/figure1_4.pdf Desktop/
+# scp kerimbae@cherry-creek.nscee.edu:/storage/nipm/kerimbae/sliding_window/figure1_4.pdf Desktop/
 
 # PLOT 1.2 ###############################################################################################################
-#create new dataset, replace P for new value
+#create new dataset, replace P for new value log1.3(1-PIP)
+
 grand <-  read.table(paste0("/storage/nipm/kerimbae/sliding_window/inversePnoprior"),header=TRUE)
 newgrandP = 10^(log(grand$P, base=1.3))
 grand$P= newgrandP
 head(grand)
 
-write.table(grand,paste0("/storage/nipm/kerimbae/sliding_window/inversePnopriorlog13"))
+write.table(grand,paste0("/storage/nipm/kerimbae/sliding_window/inversePnopriorlog13")) 
 
 ##########
 grand <-  read.table(paste0("/storage/nipm/kerimbae/sliding_window/inversePnopriorlog13"),header=TRUE)
+
+#plot the newly created column using qqman 
 library(qqman)
 pdf(paste0("/storage/nipm/kerimbae/sliding_window/log13noprior.pdf"), width=10, height=5)
 
@@ -118,8 +112,8 @@ manhattan(grand, main = "Manhattan Plot", ylim = c(0, 30), cex = 0.6,
 
 dev.off()
 
-#download the plot from cherry-creek
-scp kerimbae@cherry-creek.nscee.edu:/storage/nipm/kerimbae/sliding_window/log13noprior.pdf Desktop/slidingW
+#download the plot from cherry-creek:
+#scp kerimbae@cherry-creek.nscee.edu:/storage/nipm/kerimbae/sliding_window/log13noprior.pdf Desktop/slidingW
 
 
 
@@ -174,39 +168,22 @@ write.table(grand,paste0("/storage/nipm/kerimbae/sliding_window/allregions"))
 
 
 ######################################################################################## Log plot
+
 allregions <-  read.table(paste0("/storage/nipm/kerimbae/sliding_window/allregions"),header=TRUE)
 
 pdf(paste0("/storage/nipm/kerimbae/sliding_window/figure2.pdf"), width=10, height=5)
 
 barplot(allregions$SUM_PIP  , pch=20,  col="blue",ylab = "SUM(PIP)", xlab="region", main= "Sum by region  (cut by 1000) ")
-#plot(allregions$LOGSUM  , pch=20,  col="blue",ylab = "SUM(-log10(1-PIP))", xlab="regionID", main= "SUM(-log10(1-PIP)) by region (cut by 1000) ")
-
 dev.off()
 
 scp kerimbae@cherry-creek.nscee.edu:/storage/nipm/kerimbae/sliding_window/figure2.pdf Desktop/
-# pdf are in folder slidingW
-
-# on local R to play with graph
-allregions <-  read.table("allregions",header=TRUE)
-barplot(allregions$SUM_PIP  , pch=20,  col="blue",ylab = "SUM(PIP)", xlab="region", main= "Sum by region  (cut by 1000) ")
-
-library(ggplot2)
-p  <- ggplot(allregions,aes(x=CHR,y=SUM_PIP),color=CHR) +
-  geom_bar(stat = "identity", aes(fill = SUM_PIP), position = "dodge2")+
-  scale_fill_manual(breaks = c("2", "1", "0.5"), 
-                    values=c("red", "blue", "red", "blue","red", "blue","red", "blue",
-                             "red", "blue","red", "blue","red", "blue","red", "blue",
-                             "red", "blue","red", "blue","red", "blue","red", "blue",
-                             "red", "blue","red", "blue"))
-  
-p
-
-
-
-
 
 
 ####END of PLOTS#####
+
+
+
+
 ###################making decision whether sliding window is worth it
 
 chr=16
@@ -235,24 +212,18 @@ dev.off()
 ### Try the result for 100SNPs ###
 ## take the grand SNP file and cut by position.
 
-qsub -I -l ncpus=1,mem=7gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
-module load intel intelmpi R 
-R
 
 size <- matrix(,22,2)
-size[,1]<- c(1:22)
-size[,2]<- c(103,107,89,80,83,84,70,72,61,71,65,63,49,41,38,39,30,38,17,33,18,15)
+size[,1] <- c(1:22)
+size[,2] <- c(103,107,89,80,83,84,70,72,61,71,65,63,49,41,38,39,30,38,17,33,18,15)
 size <- data.frame(size)
-colnames(size)<-c("chr","chrlength")
+colnames(size) <- c("chr","chrlength")
 
-############################# sum PIP by 100
-grand <-  read.table(paste0("/storage/nipm/kerimbae/sliding_window/grandodd"),header=TRUE)
-
-
+############################# sum PIP by 100. Try to break up the result of 1000 SNPs into 100SNP regions to investigate behavior
+grand <-  read.table(paste0("/storage/nipm/kerimbae/sliding_window/grandodd"), header=TRUE)
 
 length = dim(grand)[1]
-
-q <- matrix(,6440,1)
+q <- matrix(, 6440, 1)
 
 k = 1
 for (i in seq(100, length, by = 100)){
@@ -270,6 +241,7 @@ data<- read.table("1000by100")
 plot(data$V1, pch=20,  col="blue",ylab = "Sum(PIP)",xlab="new regionID", main= "Sum(PIP) for sliding window run cut by 100")
 
 ##########Sum(-log10(1-PIP))for cut by 100
+
 grand <-  read.table(paste0("/storage/nipm/kerimbae/sliding_window/grandodd"),header=TRUE)
 
 length = dim(grand)[1]
@@ -293,10 +265,7 @@ plot(data$V1, pch=20,  col="blue",ylab = "Sum(-log10(1-PIP))",xlab="new regionID
 
 
 
-
-
-
-#########################################33
+########################################
 
 
 for (i in 1:22){
@@ -329,9 +298,6 @@ for (i in 1:22){
 }
 
 
-
-
-
 # combine 22 chrs in one data frame
 
 grand <-  read.table(paste0("/storage/nipm/kerimbae/sliding_window/sumchr1regions"),header=TRUE)
@@ -348,13 +314,9 @@ write.table(grand, "/storage/nipm/kerimbae/sliding_window/dataRegions")
 data<- read.table("dataRegions")
 plot(data$P, pch=20,  col="blue",ylab = "Sum(PIP)",xlab="regionID", main= "Sum(PIP) for sliding window")
 
+
+
 ###########calculate size of the region
-
-
-
-
-
-#sum PIP for 1000
 #sum PIP for 1000
 
 for (i in 1:22){

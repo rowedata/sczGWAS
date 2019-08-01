@@ -1,13 +1,9 @@
 # Benazir Rowe 
 # 4/4/2018
-# Recoding swedish dataset from bimbam 1,2 to chunks in mean genotype format
+# Cutting SSCCS chunks in mean genotype format
 # accounting for the last leftover chunk
 
 # bash command to start the R session on the remote cluster for high volume computations
-
-qsub -I -l ncpus=1,mem=5gb,cput=5:0:0 -l walltime=5:0:0 /bin/bash
-module load intel intelmpi R 
-R
 
 # splitting into chunks recoded imputed data
 

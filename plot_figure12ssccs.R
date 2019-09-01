@@ -57,14 +57,14 @@ write.table(grand,paste0("/storage/nipm/kerimbae/pimass/output/ssccs/summaryswd.
 
 
 # figure 1 barplot all regions based on sum PIP
-allregions <- read.csv("summaryswd.csv",header=TRUE)
+ssccs <- read.csv("summaryswd.csv",header=TRUE)
 
-toString(allregions$CHR)
+toString(ssccs$CHR)
 colvect <- matrix(,1244,1)
 
 #indicator creation for alternating colors
 for (i in 1:1244){
-  if (allregions$chr[i] %%2 == 0){
+  if (ssccs$chr[i] %%2 == 0){
     colvect[i]=1
   } else {
     colvect[i]=2
@@ -72,16 +72,24 @@ for (i in 1:1244){
 }
 
 
-allregions <- cbind(allregions,colvect) # add indicator vector to data frame 
+ssccs <- cbind(ssccs,colvect) # add indicator vector to data frame 
+
+
+# eps
 library(ggplot2)
 
-p <- ggplot(allregions, aes(x=chr, y=sum, colour=colvect))+
-     geom_bar(stat = "identity", position = "dodge2",show.legend = FALSE)
-  p + scale_fill_manual(values = c("blue4", "darkorange"))
-  
-  p + scale_x_continuous(breaks=seq(1,22,1))+labs(y="SUM(PIP)",x="Chromosome")
- 
+setEPS()
 
+postscript("figure3.eps")
+
+p  <- ggplot(ssccs, aes(x=chr,y=sum, fill=colvect))+ 
+  geom_bar(stat = "identity",  position = "dodge2",show.legend = FALSE)
+
+p + scale_x_continuous(breaks=seq(1,22,1))+labs(y="SUM(PIP)",x="Chromosome")
+
+ 
+dev.off()
+  
 
 
 #manhattan plot

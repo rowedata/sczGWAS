@@ -56,13 +56,22 @@ for (i in 1:1266){
 
 
 allregions <- cbind(allregions,colvect)
+
+
+
+##### draw eps
 library(ggplot2)
+
+setEPS()
+
+postscript("figure1.eps")
 
 p  <- ggplot(allregions, aes(x=CHR,y=SUM_PIP, fill=colvect))+ 
   geom_bar(stat = "identity",  position = "dodge2",show.legend = FALSE)
   
 p + scale_x_continuous(breaks=seq(1,22,1))+labs(y="SUM(PIP)",x="Chromosome")
 
+dev.off()
 
 
 

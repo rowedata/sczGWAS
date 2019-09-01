@@ -86,6 +86,24 @@ manhattan(grand,  ylim = c(0, 2), cex = 0.6, ylab=expression('log'[10]*'(1-PIP)'
 
 dev.off()
 
+# plot .esp
+
+library(qqman)
+grand <-  read.table(paste0("/storage/nipm/kerimbae/sliding_window/originalManhattan"),header=TRUE)
+setEPS()
+
+postscript("/storage/nipm/kerimbae/sliding_window/figure2_7by5.eps",width = 7,height = 5)
+
+manhattan(grand,  ylim = c(0, 1), cex = 0.6, ylab=expression('log'[10]*'(1-PIP)'),
+          cex.axis = 0.9, col = c("blue4", "orange3"), suggestiveline = F, genomewideline = F, 
+          chrlabs = c(1:20, "21", "22"), 
+         # annotatePval = 0.5 , 
+          annotateTop = FALSE)
+
+dev.off()
+
+# scp kerimbae@cherry-creek.nscee.edu:/storage/nipm/kerimbae/sliding_window/figure2_7by5.eps Desktop/final_graphs
+
 
 # scp kerimbae@cherry-creek.nscee.edu:/storage/nipm/kerimbae/sliding_window/figure1MGSannot.pdf Desktop/
   
